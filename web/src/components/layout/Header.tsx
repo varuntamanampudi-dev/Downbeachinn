@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { MOTEL } from '@/lib/constants';
 
 const navLinks = [
   { label: 'Rooms & Rates', href: '/rooms' },
@@ -45,7 +46,7 @@ export default function Header() {
             DB
           </div>
           <span style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-sky-900)', letterSpacing: '-0.02em' }}>
-            DownBeach
+            {MOTEL.name}
           </span>
         </Link>
 

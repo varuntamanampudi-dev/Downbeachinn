@@ -1,17 +1,19 @@
 import Link from 'next/link';
 import RoomCard from '@/features/rooms/components/RoomCard';
-import { ROOMS } from '@/features/rooms/data';
+import { getRoomTypes, getTaxRate } from '@/features/rooms/queries';
+import { MOTEL } from '@/lib/constants';
 
 const AMENITIES = [
-  { icon: '🌊', title: 'Steps from the Beach', desc: 'Walk to the sand in under 2 minutes from any room.' },
-  { icon: '🅿️', title: 'Free Parking', desc: 'Ample on-site parking at no extra charge for all guests.' },
-  { icon: '☕', title: 'Complimentary Breakfast', desc: 'Fresh continental breakfast served every morning.' },
-  { icon: '📶', title: 'High-Speed Wi-Fi', desc: 'Fast, reliable Wi-Fi throughout the entire property.' },
+  { icon: '🌊', title: 'Steps from the Beach', desc: 'Walk to the sand in under 5 minutes from MOTEL .' },
+  { icon: '🅿️', title: 'Free Parking', desc: 'FREE PARKING FROM SUNDAY TO THURSDAY.' },
+  { icon: '📶', title: 'FREE Wi-Fi', desc: 'Fast, reliable Wi-Fi throughout the entire property.' },
   { icon: '❄️', title: 'Climate Control', desc: 'Individual A/C and heating in every room.' },
   { icon: '🔒', title: '24/7 Front Desk', desc: 'Someone always here to help, any hour of the day.' },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [roomTypes, taxRate] = await Promise.all([getRoomTypes(), getTaxRate()]);
+
   return (
     <>
       {/* ── HERO ── */}
@@ -22,7 +24,7 @@ export default function HomePage() {
         <div className="section-container" style={{ padding: '5rem 1.5rem', position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '640px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(186,230,253,0.6)', border: '1px solid var(--color-sky-300)', borderRadius: '999px', padding: '0.35rem 1rem', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-sky-700)', marginBottom: '1.5rem', backdropFilter: 'blur(8px)' }}>
-              <span>🌊</span> Beachfront Motel — Shore City, NJ
+              <span>🌊</span> {MOTEL.addressLine2}
             </div>
 
             <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.03em', color: 'var(--color-sky-900)', marginBottom: '1.25rem' }}>
@@ -33,7 +35,7 @@ export default function HomePage() {
             </h1>
 
             <p style={{ fontSize: '1.1rem', color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '2rem', maxWidth: '500px' }}>
-              24 comfortable rooms, steps from the shore. Whether you&apos;re here for a weekend getaway or a week-long retreat, DownBeach Motel is your home by the sea.
+              {MOTEL.totalRooms} comfortable rooms, steps from the shore. Whether you&apos;re here for a weekend getaway or a week-long retreat, {MOTEL.name} is your home by the sea.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -42,7 +44,11 @@ export default function HomePage() {
             </div>
 
             <div style={{ display: 'flex', gap: '2.5rem', marginTop: '3rem', flexWrap: 'wrap' }}>
-              {[{ value: '24', label: 'Rooms' }, { value: '2 min', label: 'To the beach' }, { value: '4.8★', label: 'Guest rating' }].map((stat) => (
+              {[
+                { value: `${MOTEL.totalRooms}`, label: 'Rooms' },
+                { value: 'Pacific Ave', label: 'Atlantic City' },
+                { value: '4.8★', label: 'Guest rating' },
+              ].map((stat) => (
                 <div key={stat.label}>
                   <div style={{ fontWeight: 800, fontSize: '1.5rem', color: 'var(--color-sky-700)' }}>{stat.value}</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.1rem' }}>{stat.label}</div>
@@ -60,11 +66,11 @@ export default function HomePage() {
             <p style={{ color: 'var(--color-sky-600)', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Accommodations</p>
             <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: 'var(--color-sky-900)', letterSpacing: '-0.02em' }}>Choose Your Room</h2>
             <p style={{ color: 'var(--color-text-muted)', marginTop: '0.75rem', maxWidth: '480px', marginInline: 'auto', lineHeight: 1.6 }}>
-              From cozy standard rooms to spacious family suites — all with complimentary Wi-Fi and our signature coastal comfort.
+              From standard king and queen rooms to our luxurious Jacuzzi Suite — all non-smoking, all steps from the beach.
             </p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
-            {ROOMS.map((room) => <RoomCard key={room.id} room={room} />)}
+            {roomTypes.map((room) => <RoomCard key={room.id} room={room} taxRate={taxRate} />)}
           </div>
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <Link href="/rooms"><button className="btn-ghost">See All Rooms &amp; Rates →</button></Link>
@@ -97,15 +103,15 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', alignItems: 'center' }}>
             <div>
               <p style={{ color: 'var(--color-sky-600)', fontWeight: 600, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Find Us</p>
-              <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: 'var(--color-sky-900)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>Prime Beachfront Location</h2>
+              <h2 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.5rem)', fontWeight: 800, color: 'var(--color-sky-900)', letterSpacing: '-0.02em', marginBottom: '1rem' }}>Prime Atlantic City Location</h2>
               <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Located at 123 Beachfront Ave, Shore City, NJ — right in the heart of the strip. Walk to restaurants, shops, and of course the beach.
+                Located on Pacific Ave in the heart of Atlantic City — walking distance to the boardwalk, restaurants, shops, and of course the beach.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {[
-                  { icon: '📍', text: '123 Beachfront Ave, Shore City, NJ 08008' },
-                  { icon: '📞', text: '(609) 123-4567' },
-                  { icon: '✉️', text: 'stay@downbeach.com' },
+                  { icon: '📍', text: MOTEL.address },
+                  { icon: '📞', text: MOTEL.phone },
+                  { icon: '✉️', text: MOTEL.email },
                 ].map((item) => (
                   <div key={item.text} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
                     <span>{item.icon}</span><span>{item.text}</span>
