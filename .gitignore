@@ -1,0 +1,26 @@
+# ── Terraform ────────────────────────────────────────────────
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.*
+infra/.terraform.lock.hcl
+infra/terraform.tfvars
+infra/crash.log
+
+# ── SSH keys ─────────────────────────────────────────────────
+*.pem
+downbeach.pem
+
+# ── Next.js / Node ───────────────────────────────────────────
+web/node_modules/
+web/.next/
+web/.env.local
+web/.env.production.local
+
+# ── SQLite database (lives on the server, not in git) ────────
+web/local.db
+web/local.db-shm
+web/local.db-wal
+
+# ── OS / editor ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db

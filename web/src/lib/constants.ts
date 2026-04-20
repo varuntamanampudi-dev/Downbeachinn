@@ -2,7 +2,7 @@ export const MOTEL = {
   name:        'DownBeach Inn',
   phone:       '(609) 348-9111',
   phonePlain:  '6093489111',
-  email:       'stay@downbeachinn.com',
+  email:       'downbeach3601@gmail.com',
   address:     '3601 Pacific Ave, Atlantic City, NJ 08401',
   addressLine1: '3601 Pacific Ave',
   addressLine2: 'Atlantic City, NJ 08401',

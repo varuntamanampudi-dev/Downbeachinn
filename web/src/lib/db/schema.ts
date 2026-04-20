@@ -75,9 +75,20 @@ export const bookings = sqliteTable('bookings', {
 
 // ── Admin Users ───────────────────────────────────────────
 export const adminUsers = sqliteTable('admin_users', {
-  id:           integer('id').primaryKey({ autoIncrement: true }),
-  username:     text('username').notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
-  role:         text('role', { enum: ['owner', 'staff'] }).notNull().default('staff'),
-  createdAt:    text('created_at').notNull().default("strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"),
+  id:        integer('id').primaryKey({ autoIncrement: true }),
+  name:      text('name').notNull(),
+  phone:     text('phone').notNull().unique(),           // E.164 format e.g. "+16093489111"
+  role:      text('role', { enum: ['owner', 'staff'] }).notNull().default('staff'),
+  createdAt: text('created_at').notNull().default("strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"),
+});
+
+// ── Admin OTP Tokens ──────────────────────────────────────
+// Short-lived 6-digit codes used for phone-based login.
+export const adminOtpTokens = sqliteTable('admin_otp_tokens', {
+  id:        integer('id').primaryKey({ autoIncrement: true }),
+  phone:     text('phone').notNull(),
+  code:      text('code').notNull(),                    // 6-digit string
+  expiresAt: text('expires_at').notNull(),              // ISO datetime
+  used:      integer('used', { mode: 'boolean' }).notNull().default(false),
+  createdAt: text('created_at').notNull().default("strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"),
 });
