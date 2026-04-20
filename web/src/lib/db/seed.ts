@@ -7,7 +7,7 @@ import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import path from 'path';
-import { rooms, pricingRules, taxConfig, adminUsers } from './schema';
+import { rooms, pricingRules, taxConfig, adminUsers, adminOtpTokens } from './schema';
 
 const DB_PATH = path.join(process.cwd(), 'local.db');
 const sqlite = new Database(DB_PATH);
@@ -25,6 +25,7 @@ db.delete(pricingRules).run();
 db.delete(rooms).run();
 db.delete(taxConfig).run();
 db.delete(adminUsers).run();
+db.delete(adminOtpTokens).run();
 console.log('✓ Cleared existing data');
 
 // ── 3. Tax config ────────────────────────────────────────
@@ -40,7 +41,6 @@ const STANDARD_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Coffee Maker',
   'Free Parking',
   'Daily Housekeeping',
 ]);
@@ -50,7 +50,6 @@ const DELUXE_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Coffee Maker',
   'Free Parking',
   'Daily Housekeeping',
   'Work Desk',
@@ -62,7 +61,6 @@ const SUITE_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Coffee Maker',
   'Free Parking',
   'Daily Housekeeping',
   'Jacuzzi Tub',
@@ -151,14 +149,15 @@ const roomsData = [
 db.insert(rooms).values(roomsData).run();
 console.log(`✓ ${roomsData.length} rooms inserted`);
 
-// ── 5. Default admin user (password will be hashed in Phase 3) ──
-// Placeholder — real bcrypt hash added during Phase 3 auth setup
+// ── 5. Admin user — phone-based OTP login ────────────────
+// Change this phone number to the owner's real number before going to production.
+// Must be in E.164 format: +1XXXXXXXXXX
 db.insert(adminUsers).values({
-  username: 'admin',
-  passwordHash: 'PLACEHOLDER_CHANGE_IN_PHASE_3',
+  name: 'Owner',
+  phone: '+16093489111',
   role: 'owner',
 }).run();
-console.log('✓ Admin user placeholder inserted');
+console.log('✓ Admin user inserted (phone: +16093489111)');
 
 console.log('\n✅ Seed complete. Database ready at local.db');
 sqlite.close();
