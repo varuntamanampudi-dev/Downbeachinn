@@ -22,7 +22,7 @@ function dbRowToRoom(row: typeof rooms.$inferSelect): Room {
     basePricePerNight: row.basePricePerNight,
     isActive: row.isActive,
     imageKey: row.imageKey ?? null,
-    amenities: JSON.parse(row.amenities) as string[],
+    amenities: (() => { try { return JSON.parse(row.amenities) as string[]; } catch { return []; } })(),
     floor: row.floor,
     // imagePlaceholderGradient only used as fallback
     imagePlaceholderGradient: GRADIENTS[row.type] ?? GRADIENTS.king,

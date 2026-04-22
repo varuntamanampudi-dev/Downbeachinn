@@ -19,7 +19,7 @@ async function updatePrice(formData: FormData) {
   'use server';
   const id    = Number(formData.get('id'));
   const price = parseFloat(formData.get('price') as string);
-  if (isNaN(price) || price < 0) return;
+  if (isNaN(price) || price < 0 || price > 9999) return;
   const { eq } = await import('drizzle-orm');
   await db.update(rooms).set({ basePricePerNight: price }).where(eq(rooms.id, id));
   revalidatePath('/admin/rooms');
@@ -31,7 +31,7 @@ async function bulkUpdatePrice(formData: FormData) {
   const type       = formData.get('type') as string;
   const hasJacuzzi = formData.get('hasJacuzzi') === 'true';
   const price      = parseFloat(formData.get('price') as string);
-  if (isNaN(price) || price < 0) return;
+  if (isNaN(price) || price < 0 || price > 9999) return;
   const { eq, and } = await import('drizzle-orm');
   await db
     .update(rooms)
