@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'DownBeach Motel — Beachfront Comfort',
+  title: 'Downbeach Inn — Beachfront Comfort',
   description: 'A comfortable stay steps from the shore. 24 rooms, modern amenities, and easy online booking.',
 };
 

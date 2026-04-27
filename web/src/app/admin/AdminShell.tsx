@@ -36,7 +36,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               flexShrink: 0,
             }}>DB</div>
             <div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'white', lineHeight: 1.1 }}>DownBeach</div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'white', lineHeight: 1.1 }}>Downbeach</div>
               <div style={{ fontSize: '0.6rem', color: 'var(--color-teal-light)', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Admin Panel</div>
             </div>
           </div>

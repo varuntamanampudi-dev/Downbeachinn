@@ -5,7 +5,7 @@ import { MOTEL } from '@/lib/constants';
 
 export const metadata = {
   title: `Book a Room — ${MOTEL.name}`,
-  description: 'Reserve your room at DownBeach Inn. Check availability, select dates, and book online.',
+  description: 'Reserve your room at Downbeach Inn. Check availability, select dates, and book online.',
 };
 
 export default async function BookPage() {

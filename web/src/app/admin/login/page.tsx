@@ -71,7 +71,7 @@ export default function AdminLoginPage() {
             <span style={{ color: 'white', fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em' }}>DB</span>
           </div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>
-            DownBeach Admin
+            Downbeach Admin
           </h1>
           <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.45)' }}>
             {onStep2 ? 'Enter the 6-digit code sent to your phone' : 'Sign in with your registered phone number'}
@@ -246,7 +246,7 @@ export default function AdminLoginPage() {
         </div>
 
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.2)' }}>
-          DownBeach Inn Admin · Atlantic City, NJ
+          Downbeach Inn Admin · Atlantic City, NJ
         </p>
       </div>
     </div>

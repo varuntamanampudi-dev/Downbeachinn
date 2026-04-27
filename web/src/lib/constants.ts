@@ -1,5 +1,5 @@
 export const MOTEL = {
-  name:        'DownBeach Inn',
+  name:        'Downbeach Inn',
   phone:       '(609) 348-9111',
   phonePlain:  '6093489111',
   email:       'downbeach3601@gmail.com',

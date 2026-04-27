@@ -59,7 +59,11 @@ export default async function HomePage() {
           ══════════════════════════════════════════ */}
       <section style={{
         minHeight: '100vh',
-        background: 'linear-gradient(155deg, #071320 0%, #0d1b2a 40%, #112840 70%, #0a2a3a 100%)',
+        backgroundImage: 'url("/images/hotel-hero.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        backgroundColor: '#071320',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -67,8 +71,8 @@ export default async function HomePage() {
         overflow: 'hidden',
         paddingTop: '72px',
       }}>
-        <div aria-hidden style={{ position: 'absolute', top: '15%', right: '8%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13,148,136,0.18) 0%, transparent 65%)', pointerEvents: 'none' }} />
-        <div aria-hidden style={{ position: 'absolute', bottom: '10%', left: '-5%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13,27,42,0.6) 0%, rgba(11,120,110,0.12) 60%, transparent 80%)', pointerEvents: 'none' }} />
+        {/* Dark overlay so text stays readable over the photo */}
+        <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(155deg, rgba(7,19,32,0.80) 0%, rgba(13,27,42,0.70) 50%, rgba(10,42,58,0.75) 100%)', pointerEvents: 'none' }} />
         <div aria-hidden style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '60px 60px', pointerEvents: 'none' }} />
 
         <div className="section-container" style={{ position: 'relative', zIndex: 1, padding: '4rem 1.5rem 5rem' }}>
@@ -281,7 +285,7 @@ export default async function HomePage() {
             {/* Right: map */}
             <div style={{ borderRadius: 'var(--radius-xl)', overflow: 'hidden', boxShadow: 'var(--shadow-card-hover)', border: '1px solid var(--color-warm-100)', lineHeight: 0 }}>
               <iframe
-                title="DownBeach Inn — 3601 Pacific Ave, Atlantic City, NJ"
+                title="Downbeach Inn — 3601 Pacific Ave, Atlantic City, NJ"
                 src="https://maps.google.com/maps?q=3601+Pacific+Ave,+Atlantic+City,+NJ+08401&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="520"

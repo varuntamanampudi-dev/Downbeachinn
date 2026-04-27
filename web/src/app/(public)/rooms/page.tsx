@@ -5,7 +5,7 @@ import { MOTEL } from '@/lib/constants';
 
 export const metadata = {
   title: `Rooms & Rates — ${MOTEL.name}`,
-  description: 'Browse all room types at DownBeach Inn. King, Queen, Double, and Jacuzzi Suite options with transparent nightly rates.',
+  description: 'Browse all room types at Downbeach Inn. King, Queen, Double, and Jacuzzi Suite options with transparent nightly rates.',
 };
 
 export default async function RoomsPage() {

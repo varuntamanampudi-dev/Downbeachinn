@@ -9,22 +9,16 @@ output "site_url" {
 }
 
 output "ssh_command" {
-  value       = "ssh -i downbeach.pem ubuntu@${aws_lightsail_static_ip.downbeach.ip_address}"
+  value       = "ssh -i C:/Users/Varun/.ssh/downbeach.pem ubuntu@${aws_lightsail_static_ip.downbeach.ip_address}"
   description = "SSH into the server"
 }
 
 output "deploy_command" {
-  value       = "./scripts/deploy.sh ${aws_lightsail_static_ip.downbeach.ip_address} ./downbeach.pem"
+  value       = "./scripts/deploy.sh ${aws_lightsail_static_ip.downbeach.ip_address} C:/Users/Varun/.ssh/downbeach.pem"
   description = "Push an update to the live server"
 }
 
-output "private_key" {
-  value       = aws_lightsail_key_pair.downbeach.private_key
-  description = "Run: terraform output -raw private_key > ../downbeach.pem && chmod 400 ../downbeach.pem"
-  sensitive   = true
-}
-
 output "setup_log" {
-  value       = "ssh -i downbeach.pem ubuntu@${aws_lightsail_static_ip.downbeach.ip_address} 'tail -f /var/log/downbeach-setup.log'"
+  value       = "ssh -i C:/Users/Varun/.ssh/downbeach.pem ubuntu@${aws_lightsail_static_ip.downbeach.ip_address} 'tail -f /var/log/downbeach-setup.log'"
   description = "Watch the first-boot setup log in real time"
 }
