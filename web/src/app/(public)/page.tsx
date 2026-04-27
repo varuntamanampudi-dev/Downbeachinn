@@ -62,7 +62,6 @@ export default async function HomePage() {
         backgroundImage: 'url("/images/hotel-hero.png")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
         backgroundColor: '#071320',
         display: 'flex',
         flexDirection: 'column',
