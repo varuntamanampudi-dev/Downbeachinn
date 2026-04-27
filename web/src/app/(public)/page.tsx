@@ -247,7 +247,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '2rem', alignItems: 'start' }}>
+          <div className="location-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1.8fr', gap: '2rem', alignItems: 'start' }}>
             {/* Left: contact + nearby */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {[
@@ -287,12 +287,19 @@ export default async function HomePage() {
                 title="Downbeach Inn — 3601 Pacific Ave, Atlantic City, NJ"
                 src="https://maps.google.com/maps?q=3601+Pacific+Ave,+Atlantic+City,+NJ+08401&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 width="100%"
-                height="520"
+                height="480"
+                className="map-iframe"
                 style={{ border: 0, display: 'block' }}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
+            <style>{`
+              @media (max-width: 768px) {
+                .location-grid { grid-template-columns: 1fr !important; }
+                .map-iframe { height: 320px !important; }
+              }
+            `}</style>
           </div>
         </div>
       </section>

@@ -60,7 +60,13 @@ export const bookings = sqliteTable('bookings', {
   checkIn:         text('check_in').notNull(),             // "YYYY-MM-DD"
   checkOut:        text('check_out').notNull(),            // "YYYY-MM-DD"
   nights:          integer('nights').notNull(),
-  guests:          integer('guests').notNull().default(1),
+  adults:          integer('adults').notNull().default(2),
+  children:        integer('children').notNull().default(0),
+  extraAdultFee:   real('extra_adult_fee').notNull().default(0),
+  guestAddress:    text('guest_address'),
+  guestCity:       text('guest_city'),
+  guestState:      text('guest_state'),
+  guestZip:        text('guest_zip'),
   pricePerNight:   real('price_per_night').notNull(),
   subtotal:        real('subtotal').notNull(),
   taxAmount:       real('tax_amount').notNull(),
@@ -77,7 +83,8 @@ export const bookings = sqliteTable('bookings', {
 export const adminUsers = sqliteTable('admin_users', {
   id:        integer('id').primaryKey({ autoIncrement: true }),
   name:      text('name').notNull(),
-  phone:     text('phone').notNull().unique(),           // E.164 format e.g. "+16093489111"
+  phone:     text('phone').notNull().unique(),
+  email:     text('email'),
   role:      text('role', { enum: ['owner', 'staff'] }).notNull().default('staff'),
   createdAt: text('created_at').notNull().default("strftime('%Y-%m-%dT%H:%M:%fZ', 'now')"),
 });
