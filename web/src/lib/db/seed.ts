@@ -153,10 +153,10 @@ console.log(`✓ ${roomsData.length} rooms inserted`);
 // Change this phone number to the owner's real number before going to production.
 // Must be in E.164 format: +1XXXXXXXXXX
 db.insert(adminUsers).values([
-  { name: 'Owner',  phone: '+16093489111', role: 'owner' },
-  { name: 'Admin',  phone: '+16095768309', role: 'owner' },
+  { name: 'Owner', phone: '+16093489111', email: 'downbeach3601@gmail.com', role: 'owner' },
+  { name: 'Admin', phone: '+16095768309', email: 'REPLACE_WITH_SECOND_ADMIN_EMAIL',  role: 'owner' },
 ]).run();
-console.log('✓ Admin users inserted (+16093489111, +16095768309)');
+console.log('✓ Admin users inserted');
 
 console.log('\n✅ Seed complete. Database ready at local.db');
 sqlite.close();
