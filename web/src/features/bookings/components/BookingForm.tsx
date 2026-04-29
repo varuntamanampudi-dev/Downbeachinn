@@ -90,6 +90,9 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
   });
   const [focused, setFocused] = useState<string>('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [bookingError, setBookingError] = useState('');
+  const [confirmationCode, setConfirmationCode] = useState('');
 
   const upd = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
     setForm((p) => ({ ...p, [key]: value }));
@@ -107,6 +110,26 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
   // keep roomId in sync when eligibility changes
   if (selectedRoom && form.roomId !== selectedRoom.id) {
     upd('roomId', selectedRoom.id);
+  }
+
+  async function handleConfirm() {
+    setSubmitting(true);
+    setBookingError('');
+    try {
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, roomId: selectedRoom?.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Booking failed');
+      setConfirmationCode(data.confirmationCode);
+      setSubmitted(true);
+    } catch (err) {
+      setBookingError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const step1Ready = !!form.checkIn && !!form.checkOut && nights > 0 && !!selectedRoom;
@@ -286,11 +309,15 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
       {step === 3 && submitted && (
         <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontSize: '3rem' }}>🏖️</div>
-          <h2 style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--color-sky-900)' }}>Request Received!</h2>
-          <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-            Thank you, <strong>{form.firstName}</strong>. We&apos;ll contact you at <strong>{form.email}</strong> to confirm your reservation and arrange payment.
+          <h2 style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--color-sky-900)' }}>Booking Request Received!</h2>
+          <div style={{ background: 'var(--color-sky-50)', border: '2px solid var(--color-sky-400)', borderRadius: 'var(--radius-lg)', padding: '0.75rem 1.5rem', margin: '0.25rem 0' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-sky-600)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Confirmation Number</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-sky-900)', letterSpacing: '0.1em' }}>{confirmationCode}</div>
+          </div>
+          <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, maxWidth: '380px' }}>
+            Thank you, <strong>{form.firstName}</strong>! A confirmation email has been sent to <strong>{form.email}</strong>. We&apos;ll be in touch to confirm and arrange payment.
           </p>
-          <button type="button" onClick={() => { setStep(1); setSubmitted(false); }} style={{ marginTop: '0.5rem', padding: '0.7rem 1.5rem', background: 'var(--color-sky-600)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="button" onClick={() => { setStep(1); setSubmitted(false); setConfirmationCode(''); }} style={{ marginTop: '0.5rem', padding: '0.7rem 1.5rem', background: 'var(--color-sky-600)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, cursor: 'pointer' }}>
             Make Another Booking
           </button>
         </div>
@@ -346,10 +373,15 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
             By clicking &quot;Confirm Booking&quot; you agree to our cancellation policy. Payment will be collected at the property.
           </p>
 
+          {bookingError && (
+            <p style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: 'var(--radius-md)', padding: '0.75rem 1rem', fontSize: '0.875rem', color: '#dc2626', margin: 0 }}>
+              {bookingError}
+            </p>
+          )}
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button type="button" onClick={() => setStep(2)} style={{ flex: 1, padding: '0.8rem', background: 'white', color: 'var(--color-sky-700)', border: '2px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
-            <button type="button" onClick={() => setSubmitted(true)} style={{ flex: 2, padding: '0.8rem', background: 'linear-gradient(135deg, var(--color-sky-500), var(--color-sky-700))', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 20px rgba(14,165,233,0.3)' }}>
-              Confirm Booking — ${formatMoney(pricing.total)}
+            <button type="button" onClick={() => setStep(2)} disabled={submitting} style={{ flex: 1, padding: '0.8rem', background: 'white', color: 'var(--color-sky-700)', border: '2px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
+            <button type="button" onClick={handleConfirm} disabled={submitting} style={{ flex: 2, padding: '0.8rem', background: submitting ? '#94a3b8' : 'linear-gradient(135deg, var(--color-sky-500), var(--color-sky-700))', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: submitting ? 'none' : '0 4px 20px rgba(14,165,233,0.3)' }}>
+              {submitting ? 'Submitting…' : `Confirm Booking — $${formatMoney(pricing.total)}`}
             </button>
           </div>
         </div>

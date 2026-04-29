@@ -65,7 +65,7 @@ export async function sendOtp(phone: string, code: string): Promise<void> {
     const twilio = (await import('twilio')).default;
     const client = twilio(sid, token);
     await client.messages.create({
-      body: `Your DownBeach admin code is: ${code}. It expires in 10 minutes.`,
+      body: `Your Downbeach Inn admin code is: ${code}. It expires in 10 minutes.`,
       from,
       to: phone,
     });
