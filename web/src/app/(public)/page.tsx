@@ -11,7 +11,7 @@ import HeroBookingWidget from '@/components/HeroBookingWidget';
 
 const HOTEL_AMENITIES = [
   { Icon: Waves,       title: 'Steps from the Beach',       desc: 'Walk to the sand in under 5 minutes.' },
-  { Icon: ParkingCircle, title: 'Free Parking Sun – Thu',   desc: 'Complimentary on-site parking every Sunday through Thursday.' },
+  { Icon: ParkingCircle, title: 'On-Site Parking',           desc: 'Private parking available on site — no reservation needed. $10 per day.' },
   { Icon: Wifi,        title: 'Free High-Speed Wi-Fi',      desc: 'Fast, reliable Wi-Fi throughout the entire property.' },
   { Icon: Thermometer, title: 'Individual Climate Control', desc: 'Personal A/C and heating in every room.' },
   { Icon: BellRing,    title: '24/7 Front Desk',            desc: 'Someone always here to help, day or night.' },

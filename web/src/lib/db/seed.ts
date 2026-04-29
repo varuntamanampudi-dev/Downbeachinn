@@ -41,7 +41,7 @@ const STANDARD_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Free Parking',
+  'On-Site Parking ($10/day)',
   'Daily Housekeeping',
 ]);
 
@@ -50,7 +50,7 @@ const DELUXE_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Free Parking',
+  'On-Site Parking ($10/day)',
   'Daily Housekeeping',
   'Work Desk',
   'Blackout Curtains',
@@ -61,7 +61,7 @@ const SUITE_AMENITIES = JSON.stringify([
   'Air Conditioning',
   'Flat-Screen TV',
   'Mini Fridge',
-  'Free Parking',
+  'On-Site Parking ($10/day)',
   'Daily Housekeeping',
   'Jacuzzi Tub',
   'Sitting Area',
