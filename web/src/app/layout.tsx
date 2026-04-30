@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Downbeach Inn — Beachfront Comfort',
   description: 'A comfortable stay steps from the shore. 24 rooms, modern amenities, and easy online booking.',
+  verification: {
+    google: 'google223859cc84390ae3',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
