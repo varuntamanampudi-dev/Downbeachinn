@@ -154,7 +154,7 @@ console.log(`✓ ${roomsData.length} rooms inserted`);
 // Must be in E.164 format: +1XXXXXXXXXX
 db.insert(adminUsers).values([
   { name: 'Owner', phone: '+16093489111', email: 'downbeach3601@gmail.com', role: 'owner' },
-  { name: 'Admin', phone: '+16095768309', email: 'REPLACE_WITH_SECOND_ADMIN_EMAIL',  role: 'owner' },
+  { name: 'Admin', phone: '+16095768309', email: 'jimmymartin0974@gmail.com', role: 'owner' },
 ]).run();
 console.log('✓ Admin users inserted');
 
