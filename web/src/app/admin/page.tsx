@@ -1,8 +1,9 @@
 import { db } from '@/lib/db/client';
-import { rooms, pricingRules, taxConfig } from '@/lib/db/schema';
-import { eq, count } from 'drizzle-orm';
+import { rooms, pricingRules, taxConfig, bookings } from '@/lib/db/schema';
+import { eq, count, sum } from 'drizzle-orm';
 import Link from 'next/link';
-import { BedDouble, Tag, Percent, BedSingle, ArrowRight, ChevronRight } from 'lucide-react';
+import { BedDouble, Tag, Percent, ChevronRight, CalendarCheck } from 'lucide-react';
+import { formatMoney } from '@/lib/pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,11 +12,16 @@ async function getStats() {
   const [activeRooms]      = await db.select({ c: count() }).from(rooms).where(eq(rooms.isActive, true));
   const [activePriceRules] = await db.select({ c: count() }).from(pricingRules).where(eq(pricingRules.isActive, true));
   const [tax]              = await db.select({ rate: taxConfig.ratePercent }).from(taxConfig);
+  const [pendingBookings]  = await db.select({ c: count() }).from(bookings).where(eq(bookings.status, 'pending'));
+  const [allBookings]      = await db.select({ c: count(), rev: sum(bookings.total) }).from(bookings);
   return {
-    total:      totalRooms?.c  ?? 0,
-    active:     activeRooms?.c ?? 0,
-    priceRules: activePriceRules?.c ?? 0,
-    taxRate:    tax?.rate ?? 13.63,
+    total:          totalRooms?.c  ?? 0,
+    active:         activeRooms?.c ?? 0,
+    priceRules:     activePriceRules?.c ?? 0,
+    taxRate:        tax?.rate ?? 13.63,
+    pendingBookings: pendingBookings?.c ?? 0,
+    totalBookings:  allBookings?.c ?? 0,
+    revenue:        Number(allBookings?.rev ?? 0),
   };
 }
 
@@ -23,13 +29,14 @@ export default async function AdminOverviewPage() {
   const stats = await getStats();
 
   const STATS = [
-    { label: 'Active Rooms',       value: stats.active,     sub: `of ${stats.total} total`,         Icon: BedDouble, color: '#0d9488', bg: 'rgba(13,148,136,0.12)', border: 'rgba(13,148,136,0.25)' },
-    { label: 'Inactive Rooms',     value: stats.total - stats.active, sub: 'hidden from booking',   Icon: BedSingle, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  border: 'rgba(245,158,11,0.25)' },
-    { label: 'Active Price Rules', value: stats.priceRules, sub: 'date-range overrides',            Icon: Tag,       color: '#6366f1', bg: 'rgba(99,102,241,0.1)',  border: 'rgba(99,102,241,0.25)' },
-    { label: 'NJ Hotel Tax',       value: `${stats.taxRate}%`, sub: 'applied at checkout',          Icon: Percent,   color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)',  border: 'rgba(14,165,233,0.25)' },
+    { label: 'Total Bookings',     value: stats.totalBookings,          sub: `${stats.pendingBookings} pending`,  Icon: CalendarCheck, color: '#0d9488', bg: 'rgba(13,148,136,0.12)', border: 'rgba(13,148,136,0.25)' },
+    { label: 'Total Revenue',      value: `$${formatMoney(stats.revenue)}`, sub: 'all bookings combined',         Icon: Percent,       color: '#6366f1', bg: 'rgba(99,102,241,0.1)',  border: 'rgba(99,102,241,0.25)' },
+    { label: 'Active Rooms',       value: stats.active,                 sub: `of ${stats.total} total`,           Icon: BedDouble,     color: '#22c55e', bg: 'rgba(34,197,94,0.1)',   border: 'rgba(34,197,94,0.25)'  },
+    { label: 'NJ Hotel Tax',       value: `${stats.taxRate}%`,          sub: 'applied at checkout',               Icon: Tag,           color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)',  border: 'rgba(14,165,233,0.25)' },
   ];
 
   const QUICK_ACTIONS = [
+    { href: '/admin/bookings', label: 'View Bookings',  desc: `${stats.pendingBookings} pending — confirm, check in, check out`, Icon: CalendarCheck },
     { href: '/admin/rooms',    label: 'Manage Rooms',   desc: 'Toggle availability & edit base prices',  Icon: BedDouble },
     { href: '/admin/pricing',  label: 'Pricing Rules',  desc: 'Create seasonal / event date overrides',  Icon: Tag       },
     { href: '/admin/settings', label: 'Tax Settings',   desc: 'Update the NJ hotel/motel tax rate',      Icon: Percent   },

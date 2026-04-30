@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BedDouble, Tag, Settings, ExternalLink, LogOut } from 'lucide-react';
+import { LayoutDashboard, BedDouble, Tag, Settings, ExternalLink, LogOut, CalendarCheck } from 'lucide-react';
 
 const NAV = [
-  { href: '/admin',          label: 'Overview', Icon: LayoutDashboard },
-  { href: '/admin/rooms',    label: 'Rooms',    Icon: BedDouble       },
-  { href: '/admin/pricing',  label: 'Pricing',  Icon: Tag             },
-  { href: '/admin/settings', label: 'Settings', Icon: Settings        },
+  { href: '/admin',           label: 'Overview', Icon: LayoutDashboard },
+  { href: '/admin/bookings',  label: 'Bookings', Icon: CalendarCheck   },
+  { href: '/admin/rooms',     label: 'Rooms',    Icon: BedDouble       },
+  { href: '/admin/pricing',   label: 'Pricing',  Icon: Tag             },
+  { href: '/admin/settings',  label: 'Settings', Icon: Settings        },
 ];
 
 export default function AdminNav() {

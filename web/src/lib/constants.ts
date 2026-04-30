@@ -6,5 +6,5 @@ export const MOTEL = {
   address:     '3601 Pacific Ave, Atlantic City, NJ 08401',
   addressLine1: '3601 Pacific Ave',
   addressLine2: 'Atlantic City, NJ 08401',
-  totalRooms:  21,
+  totalRooms:  22,
 } as const;

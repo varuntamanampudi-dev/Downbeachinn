@@ -77,8 +77,8 @@ const SUITE_AMENITIES = JSON.stringify([
 //  1 Suite w/ Jacuzzi  → room 401
 
 const roomsData = [
-  // ── King Rooms (101–107) ──
-  ...Array.from({ length: 7 }, (_, i) => ({
+  // ── King Rooms (101–108) ──
+  ...Array.from({ length: 8 }, (_, i) => ({
     roomNumber: `10${i + 1}`,
     type: 'king' as const,
     name: 'King Room',
