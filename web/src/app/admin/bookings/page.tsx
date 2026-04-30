@@ -1,5 +1,3 @@
-'use server';
-
 import { db } from '@/lib/db/client';
 import { bookings, rooms } from '@/lib/db/schema';
 import { eq, desc, count, sum } from 'drizzle-orm';
