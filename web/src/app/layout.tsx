@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Downbeach Inn — Beachfront Comfort',
   description: 'A comfortable stay steps from the shore. 24 rooms, modern amenities, and easy online booking.',
   verification: {
-    google: 'google223859cc84390ae3',
+    google: '0YwnPvkK16XZJH9GzAXZ6H_wF32j5cmBa2jqmoB8HuI',
   },
 };
 
