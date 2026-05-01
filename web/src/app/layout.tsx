@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   verification: {
     google: '0YwnPvkK16XZJH9GzAXZ6H_wF32j5cmBa2jqmoB8HuI',
   },
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
