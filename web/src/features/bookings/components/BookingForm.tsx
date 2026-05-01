@@ -100,7 +100,7 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
   const today = new Date().toISOString().split('T')[0];
   const nights =
     form.checkIn && form.checkOut
-      ? Math.max(0, (Date.UTC(...(form.checkOut.split('-').map(Number) as [number, number, number])) - Date.UTC(...(form.checkIn.split('-').map(Number) as [number, number, number]))) / 86400000)
+      ? Math.max(0, Math.round((new Date(form.checkOut).getTime() - new Date(form.checkIn).getTime()) / 86400000))
       : 0;
 
   const eligibleRooms = roomTypes.filter((r) => isRoomEligible(r, form.adults, form.children));
