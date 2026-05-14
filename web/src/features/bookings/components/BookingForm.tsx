@@ -20,7 +20,6 @@ const US_STATES = [
 
 function isRoomEligible(room: Room, adults: number, children: number): boolean {
   if (room.type === 'double') return adults <= 4;
-  // king / queen / suite: max 2 adults, max 1 child
   return adults <= 2 && children <= 1;
 }
 
@@ -28,7 +27,7 @@ function inputStyle(focused: boolean): React.CSSProperties {
   return {
     width: '100%',
     padding: '0.7rem 1rem',
-    border: focused ? '2px solid var(--color-sky-400)' : '1.5px solid var(--color-sky-200)',
+    border: focused ? `2px solid var(--color-teal)` : '1.5px solid rgba(13,148,136,0.25)',
     borderRadius: 'var(--radius-md)',
     fontSize: '0.925rem',
     color: 'var(--color-text-primary)',
@@ -41,31 +40,38 @@ function inputStyle(focused: boolean): React.CSSProperties {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '0.4rem', letterSpacing: '0.02em' }}>
+    <label style={{
+      display: 'block', fontSize: '0.8rem', fontWeight: 600,
+      color: 'var(--color-text-secondary)', marginBottom: '0.4rem', letterSpacing: '0.02em',
+    }}>
       {children}
     </label>
   );
 }
 
-function CounterBtn({ value, onChange, min, max, label }: { value: number; onChange: (n: number) => void; min: number; max: number; label: string }) {
+function CounterBtn({ value, onChange, min, max, label }: {
+  value: number; onChange: (n: number) => void; min: number; max: number; label: string;
+}) {
+  const btnBase: React.CSSProperties = {
+    width: '36px', height: '36px', borderRadius: '50%',
+    border: '1.5px solid rgba(13,148,136,0.25)',
+    fontWeight: 700, fontSize: '1.1rem',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+  };
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-      <button
-        type="button"
-        onClick={() => onChange(Math.max(min, value - 1))}
-        disabled={value <= min}
-        style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid var(--color-sky-200)', background: value <= min ? '#f8fafc' : 'white', color: value <= min ? '#cbd5e1' : 'var(--color-sky-700)', fontWeight: 700, fontSize: '1.1rem', cursor: value <= min ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >−</button>
+      <button type="button" onClick={() => onChange(Math.max(min, value - 1))} disabled={value <= min}
+        style={{ ...btnBase, background: value <= min ? '#f8fafc' : 'white', color: value <= min ? '#cbd5e1' : 'var(--color-teal)', cursor: value <= min ? 'not-allowed' : 'pointer' }}>
+        −
+      </button>
       <div style={{ minWidth: '60px', textAlign: 'center' }}>
-        <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--color-sky-900)' }}>{value}</div>
+        <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--color-navy)' }}>{value}</div>
         <div style={{ fontSize: '0.68rem', color: 'var(--color-text-muted)' }}>{label}</div>
       </div>
-      <button
-        type="button"
-        onClick={() => onChange(Math.min(max, value + 1))}
-        disabled={value >= max}
-        style={{ width: '36px', height: '36px', borderRadius: '50%', border: '1.5px solid var(--color-sky-200)', background: value >= max ? '#f8fafc' : 'white', color: value >= max ? '#cbd5e1' : 'var(--color-sky-700)', fontWeight: 700, fontSize: '1.1rem', cursor: value >= max ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-      >+</button>
+      <button type="button" onClick={() => onChange(Math.min(max, value + 1))} disabled={value >= max}
+        style={{ ...btnBase, background: value >= max ? '#f8fafc' : 'white', color: value >= max ? '#cbd5e1' : 'var(--color-teal)', cursor: value >= max ? 'not-allowed' : 'pointer' }}>
+        +
+      </button>
     </div>
   );
 }
@@ -73,20 +79,10 @@ function CounterBtn({ value, onChange, min, max, label }: { value: number; onCha
 export default function BookingForm({ roomTypes, taxRate }: Props) {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState({
-    checkIn: '',
-    checkOut: '',
-    adults: 2,
-    children: 0,
+    checkIn: '', checkOut: '', adults: 2, children: 0,
     roomId: roomTypes[0]?.id ?? 0,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: 'NJ',
-    zip: '',
-    specialRequests: '',
+    firstName: '', lastName: '', email: '', phone: '',
+    address: '', city: '', state: 'NJ', zip: '', specialRequests: '',
   });
   const [focused, setFocused] = useState<string>('');
   const [submitted, setSubmitted] = useState(false);
@@ -98,19 +94,15 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
     setForm((p) => ({ ...p, [key]: value }));
 
   const today = new Date().toISOString().split('T')[0];
-  const nights =
-    form.checkIn && form.checkOut
-      ? Math.max(0, Math.round((new Date(form.checkOut).getTime() - new Date(form.checkIn).getTime()) / 86400000))
-      : 0;
+  const nights = form.checkIn && form.checkOut
+    ? Math.max(0, Math.round((new Date(form.checkOut).getTime() - new Date(form.checkIn).getTime()) / 86400000))
+    : 0;
 
   const eligibleRooms = roomTypes.filter((r) => isRoomEligible(r, form.adults, form.children));
   const selectedRoom = eligibleRooms.find((r) => r.id === form.roomId) ?? eligibleRooms[0];
   const pricing = selectedRoom ? calcPricing(selectedRoom.basePricePerNight, nights, taxRate, form.adults) : null;
 
-  // keep roomId in sync when eligibility changes
-  if (selectedRoom && form.roomId !== selectedRoom.id) {
-    upd('roomId', selectedRoom.id);
-  }
+  if (selectedRoom && form.roomId !== selectedRoom.id) upd('roomId', selectedRoom.id);
 
   async function handleConfirm() {
     setSubmitting(true);
@@ -137,60 +129,101 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
     !!form.firstName && !!form.lastName && !!form.email &&
     !!form.phone && !!form.address && !!form.city && !!form.state && !!form.zip;
 
+  // ── Shared styles ──────────────────────────────────────────────
+  const infoBox: React.CSSProperties = {
+    fontSize: '0.78rem', color: 'var(--color-teal)',
+    marginTop: '0.5rem', background: 'var(--color-teal-50)',
+    padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-md)',
+    border: '1px solid rgba(13,148,136,0.2)',
+  };
+
+  const btnPrimary = (disabled: boolean): React.CSSProperties => ({
+    padding: '0.8rem', color: 'white', border: 'none',
+    borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    background: disabled ? '#cbd5e1' : 'var(--color-teal)',
+    boxShadow: disabled ? 'none' : '0 4px 16px rgba(13,148,136,0.35)',
+    transition: 'background 0.2s',
+  });
+
+  const btnBack: React.CSSProperties = {
+    flex: 1, padding: '0.8rem', background: 'white',
+    color: 'var(--color-teal)', border: '2px solid rgba(13,148,136,0.25)',
+    borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer',
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Step indicator */}
-      <div style={{ display: 'flex', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1.5px solid var(--color-sky-200)' }}>
+
+      {/* ── Step indicator ── */}
+      <div style={{ display: 'flex', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1.5px solid rgba(13,148,136,0.25)' }}>
         {(['Dates & Room', 'Your Details', 'Review'] as const).map((label, i) => {
           const s = (i + 1) as Step;
           const active = step === s;
           const done = step > s;
           return (
-            <button key={label} type="button" onClick={() => done && setStep(s)} style={{ flex: 1, padding: '0.65rem', border: 'none', borderRight: i < 2 ? '1px solid var(--color-sky-200)' : 'none', background: active ? 'var(--color-sky-600)' : done ? 'var(--color-sky-50)' : 'white', color: active ? 'white' : done ? 'var(--color-sky-600)' : 'var(--color-text-muted)', fontWeight: active ? 700 : 500, fontSize: '0.8rem', cursor: done ? 'pointer' : 'default', transition: 'all 0.2s' }}>
+            <button key={label} type="button" onClick={() => done && setStep(s)} style={{
+              flex: 1, padding: '0.65rem',
+              border: 'none', borderRight: i < 2 ? '1px solid rgba(13,148,136,0.2)' : 'none',
+              background: active ? 'var(--color-teal)' : done ? 'var(--color-teal-50)' : 'white',
+              color: active ? 'white' : done ? 'var(--color-teal)' : 'var(--color-text-muted)',
+              fontWeight: active ? 700 : 500, fontSize: '0.8rem',
+              cursor: done ? 'pointer' : 'default', transition: 'all 0.2s',
+            }}>
               {done ? '✓ ' : `${s}. `}{label}
             </button>
           );
         })}
       </div>
 
-      {/* ── STEP 1 ── */}
+      {/* ══════════════════════════════════════════
+          STEP 1 — Dates & Room
+          ══════════════════════════════════════════ */}
       {step === 1 && (
         <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-sky-900)' }}>Select Dates &amp; Room</h2>
+          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-navy)' }}>Select Dates &amp; Room</h2>
 
           {/* Dates */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <Label>Check-in</Label>
-              <input type="date" value={form.checkIn} min={today} onChange={(e) => upd('checkIn', e.target.value)} onFocus={() => setFocused('checkIn')} onBlur={() => setFocused('')} style={inputStyle(focused === 'checkIn')} />
+              <input type="date" value={form.checkIn} min={today}
+                onChange={(e) => upd('checkIn', e.target.value)}
+                onFocus={() => setFocused('checkIn')} onBlur={() => setFocused('')}
+                style={inputStyle(focused === 'checkIn')} />
             </div>
             <div>
               <Label>Check-out</Label>
-              <input type="date" value={form.checkOut} min={form.checkIn || today} onChange={(e) => upd('checkOut', e.target.value)} onFocus={() => setFocused('checkOut')} onBlur={() => setFocused('')} style={inputStyle(focused === 'checkOut')} />
+              <input type="date" value={form.checkOut} min={form.checkIn || today}
+                onChange={(e) => upd('checkOut', e.target.value)}
+                onFocus={() => setFocused('checkOut')} onBlur={() => setFocused('')}
+                style={inputStyle(focused === 'checkOut')} />
             </div>
           </div>
 
           {/* Guests */}
           <div>
             <Label>Guests</Label>
-            <div style={{ background: 'var(--color-sky-50)', border: '1.5px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', padding: '1.1rem 1.25rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            <div style={{ background: 'var(--color-teal-50)', border: '1.5px solid rgba(13,148,136,0.25)', borderRadius: 'var(--radius-md)', padding: '1.1rem 1.25rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-sky-700)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>Adults</div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-teal)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>Adults</div>
                 <CounterBtn value={form.adults} onChange={(n) => upd('adults', n)} min={1} max={4} label="adult(s)" />
               </div>
               <div>
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-sky-700)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>Children <span style={{ fontWeight: 400, color: 'var(--color-text-muted)', textTransform: 'none', letterSpacing: 0 }}>(under 17 · free)</span></div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-teal)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+                  Children <span style={{ fontWeight: 400, color: 'var(--color-text-muted)', textTransform: 'none', letterSpacing: 0 }}>(under 17 · free)</span>
+                </div>
                 <CounterBtn value={form.children} onChange={(n) => upd('children', n)} min={0} max={4} label="child(ren)" />
               </div>
             </div>
             {form.adults > 2 && (
-              <p style={{ fontSize: '0.78rem', color: 'var(--color-sky-700)', marginTop: '0.5rem', background: 'var(--color-sky-50)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-sky-200)' }}>
-                ℹ️ Extra adult fee: <strong>+${(form.adults - 2) * 10}/night</strong> for {form.adults - 2} additional adult{form.adults - 2 > 1 ? 's' : ''}. Only Double rooms are available for 3+ adults.
+              <p style={infoBox}>
+                ℹ️ Extra adult fee: <strong>+${(form.adults - 2) * 10}/night</strong> for {form.adults - 2} additional adult{form.adults - 2 > 1 ? 's' : ''}. Only Double rooms available for 3+ adults.
               </p>
             )}
             {form.children > 1 && (
-              <p style={{ fontSize: '0.78rem', color: 'var(--color-sky-700)', marginTop: '0.5rem', background: 'var(--color-sky-50)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-sky-200)' }}>
-                ℹ️ King, Queen &amp; Suite rooms fit 1 child max. Only Double rooms are available for 2+ children.
+              <p style={infoBox}>
+                ℹ️ King, Queen &amp; Suite rooms fit 1 child max. Only Double rooms available for 2+ children.
               </p>
             )}
           </div>
@@ -199,22 +232,29 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
           <div>
             <Label>Room Type</Label>
             {eligibleRooms.length === 0 ? (
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', padding: '1rem', background: 'var(--color-sky-50)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-sky-200)' }}>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', padding: '1rem', background: 'var(--color-teal-50)', borderRadius: 'var(--radius-md)', border: '1px solid rgba(13,148,136,0.2)' }}>
                 No rooms available for this guest combination. Please adjust your guests.
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {eligibleRooms.map((room) => (
-                  <button key={room.id} type="button" onClick={() => upd('roomId', room.id)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', border: form.roomId === room.id ? '2px solid var(--color-sky-400)' : '1.5px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', background: form.roomId === room.id ? 'var(--color-sky-50)' : 'white', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s', gap: '1rem' }}>
+                  <button key={room.id} type="button" onClick={() => upd('roomId', room.id)} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '1rem 1.25rem', textAlign: 'left', gap: '1rem', cursor: 'pointer',
+                    border: form.roomId === room.id ? '2px solid var(--color-teal)' : '1.5px solid rgba(13,148,136,0.2)',
+                    borderRadius: 'var(--radius-md)',
+                    background: form.roomId === room.id ? 'var(--color-teal-50)' : 'white',
+                    transition: 'all 0.15s',
+                  }}>
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-sky-900)' }}>{room.name}</div>
+                      <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-navy)' }}>{room.name}</div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', marginTop: '0.2rem' }}>
                         {room.beds} · Up to {room.maxGuests} adults{room.hasJacuzzi ? ' · 🛁 Jacuzzi' : ''}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <div style={{ fontWeight: 700, color: 'var(--color-sky-700)', fontSize: '1rem' }}>${formatMoney(room.basePricePerNight)}</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>/night + tax</div>
+                      <div style={{ fontWeight: 700, color: 'var(--color-teal)', fontSize: '1rem' }}>${formatMoney(room.basePricePerNight)}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>/night excl. tax</div>
                     </div>
                   </button>
                 ))}
@@ -224,31 +264,34 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
 
           {/* Pricing summary */}
           {pricing && nights > 0 && (
-            <div style={{ background: 'var(--color-sky-700)', color: 'white', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+            <div style={{ background: 'var(--color-navy)', color: 'white', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{nights} night{nights > 1 ? 's' : ''} · {selectedRoom?.name}</span>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>${formatMoney(pricing.subtotal)}</span>
-                  <span style={{ fontSize: '0.72rem', opacity: 0.75, marginLeft: '0.3rem' }}>excl. tax</span>
+                  <span style={{ fontSize: '0.72rem', opacity: 0.65, marginLeft: '0.3rem' }}>excl. tax</span>
                 </div>
               </div>
-              <div style={{ fontSize: '0.72rem', opacity: 0.8, display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: '0.72rem', opacity: 0.7, display: 'flex', justifyContent: 'space-between' }}>
                 <span>${formatMoney(pricing.pricePerNight)}/night{pricing.extraAdultFeePerNight > 0 ? ` + $${pricing.extraAdultFeePerNight} extra adults` : ''} × {nights} nights</span>
                 <span>+ ${formatMoney(pricing.taxAmount)} tax</span>
               </div>
             </div>
           )}
 
-          <button type="button" onClick={() => setStep(2)} disabled={!step1Ready} style={{ padding: '0.8rem', background: step1Ready ? 'linear-gradient(135deg, var(--color-sky-500), var(--color-sky-700))' : '#cbd5e1', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem', cursor: step1Ready ? 'pointer' : 'not-allowed' }}>
+          <button type="button" onClick={() => setStep(2)} disabled={!step1Ready}
+            style={{ ...btnPrimary(!step1Ready) }}>
             Continue to Your Details →
           </button>
         </div>
       )}
 
-      {/* ── STEP 2 ── */}
+      {/* ══════════════════════════════════════════
+          STEP 2 — Guest Details
+          ══════════════════════════════════════════ */}
       {step === 2 && (
         <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-sky-900)' }}>Your Details</h2>
+          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-navy)' }}>Your Details</h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
@@ -300,36 +343,42 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
           </div>
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button type="button" onClick={() => setStep(1)} style={{ flex: 1, padding: '0.8rem', background: 'white', color: 'var(--color-sky-700)', border: '2px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
-            <button type="button" onClick={() => setStep(3)} disabled={!step2Ready} style={{ flex: 2, padding: '0.8rem', background: step2Ready ? 'linear-gradient(135deg, var(--color-sky-500), var(--color-sky-700))' : '#cbd5e1', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem', cursor: step2Ready ? 'pointer' : 'not-allowed' }}>
+            <button type="button" onClick={() => setStep(1)} style={btnBack}>← Back</button>
+            <button type="button" onClick={() => setStep(3)} disabled={!step2Ready}
+              style={{ ...btnPrimary(!step2Ready), flex: 2 }}>
               Review Booking →
             </button>
           </div>
         </div>
       )}
 
-      {/* ── STEP 3 — Confirmed ── */}
+      {/* ══════════════════════════════════════════
+          STEP 3 — Confirmed
+          ══════════════════════════════════════════ */}
       {step === 3 && submitted && (
         <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontSize: '3rem' }}>🏖️</div>
-          <h2 style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--color-sky-900)' }}>Booking Request Received!</h2>
-          <div style={{ background: 'var(--color-sky-50)', border: '2px solid var(--color-sky-400)', borderRadius: 'var(--radius-lg)', padding: '0.75rem 1.5rem', margin: '0.25rem 0' }}>
-            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-sky-600)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Confirmation Number</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-sky-900)', letterSpacing: '0.1em' }}>{confirmationCode}</div>
+          <h2 style={{ fontWeight: 800, fontSize: '1.3rem', color: 'var(--color-navy)' }}>Booking Request Received!</h2>
+          <div style={{ background: 'var(--color-teal-50)', border: '2px solid var(--color-teal)', borderRadius: 'var(--radius-lg)', padding: '0.75rem 1.5rem', margin: '0.25rem 0' }}>
+            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-teal)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Confirmation Number</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--color-navy)', letterSpacing: '0.1em' }}>{confirmationCode}</div>
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', lineHeight: 1.6, maxWidth: '380px' }}>
             Thank you, <strong>{form.firstName}</strong>! A confirmation email has been sent to <strong>{form.email}</strong>. We&apos;ll be in touch to confirm and arrange payment.
           </p>
-          <button type="button" onClick={() => { setStep(1); setSubmitted(false); setConfirmationCode(''); }} style={{ marginTop: '0.5rem', padding: '0.7rem 1.5rem', background: 'var(--color-sky-600)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, cursor: 'pointer' }}>
+          <button type="button" onClick={() => { setStep(1); setSubmitted(false); setConfirmationCode(''); }}
+            style={{ marginTop: '0.5rem', padding: '0.7rem 1.5rem', background: 'var(--color-teal)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(13,148,136,0.35)' }}>
             Make Another Booking
           </button>
         </div>
       )}
 
-      {/* ── STEP 3 — Review ── */}
+      {/* ══════════════════════════════════════════
+          STEP 3 — Review
+          ══════════════════════════════════════════ */}
       {step === 3 && !submitted && pricing && (
         <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-sky-900)' }}>Review Your Booking</h2>
+          <h2 style={{ fontWeight: 700, fontSize: '1.15rem', color: 'var(--color-navy)' }}>Review Your Booking</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {[
@@ -344,14 +393,15 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
               { label: 'Phone',      value: form.phone },
               { label: 'Address',    value: `${form.address}, ${form.city}, ${form.state} ${form.zip}` },
             ].map(({ label, value }) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', padding: '0.55rem 0', borderBottom: '1px solid var(--color-sky-100)', gap: '1rem' }}>
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', padding: '0.55rem 0', borderBottom: '1px solid rgba(13,148,136,0.1)', gap: '1rem' }}>
                 <span style={{ color: 'var(--color-text-muted)', fontWeight: 500, flexShrink: 0 }}>{label}</span>
                 <span style={{ color: 'var(--color-text-primary)', fontWeight: 600, textAlign: 'right' }}>{value}</span>
               </div>
             ))}
           </div>
 
-          <div style={{ background: 'var(--color-sky-50)', border: '1px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+          {/* Price breakdown */}
+          <div style={{ background: 'var(--color-teal-50)', border: '1px solid rgba(13,148,136,0.2)', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
               <span>${formatMoney(pricing.pricePerNight)}/night × {nights} night{nights > 1 ? 's' : ''}</span>
               <span>${formatMoney(pricing.pricePerNight * nights)}</span>
@@ -366,7 +416,7 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
               <span>NJ Hotel/Motel Tax ({pricing.taxRatePercent}%)</span>
               <span>${formatMoney(pricing.taxAmount)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-sky-900)', borderTop: '1px solid var(--color-sky-200)', paddingTop: '0.5rem', marginTop: '0.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-navy)', borderTop: '1px solid rgba(13,148,136,0.2)', paddingTop: '0.5rem', marginTop: '0.25rem' }}>
               <span>Total</span>
               <span>${formatMoney(pricing.total)}</span>
             </div>
@@ -381,9 +431,13 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
               {bookingError}
             </p>
           )}
+
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button type="button" onClick={() => setStep(2)} disabled={submitting} style={{ flex: 1, padding: '0.8rem', background: 'white', color: 'var(--color-sky-700)', border: '2px solid var(--color-sky-200)', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: 'pointer' }}>← Back</button>
-            <button type="button" onClick={handleConfirm} disabled={submitting} style={{ flex: 2, padding: '0.8rem', background: submitting ? '#94a3b8' : 'linear-gradient(135deg, var(--color-sky-500), var(--color-sky-700))', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.95rem', cursor: submitting ? 'not-allowed' : 'pointer', boxShadow: submitting ? 'none' : '0 4px 20px rgba(14,165,233,0.3)' }}>
+            <button type="button" onClick={() => setStep(2)} disabled={submitting} style={btnBack}>← Back</button>
+            <button type="button" onClick={handleConfirm} disabled={submitting} style={{
+              ...btnPrimary(submitting), flex: 2,
+              background: submitting ? '#94a3b8' : 'var(--color-teal)',
+            }}>
               {submitting ? 'Submitting…' : `Confirm Booking — $${formatMoney(pricing.total)}`}
             </button>
           </div>
