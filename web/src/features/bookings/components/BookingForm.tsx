@@ -227,11 +227,14 @@ export default function BookingForm({ roomTypes, taxRate }: Props) {
             <div style={{ background: 'var(--color-sky-700)', color: 'white', borderRadius: 'var(--radius-md)', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{nights} night{nights > 1 ? 's' : ''} · {selectedRoom?.name}</span>
-                <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>${formatMoney(pricing.total)}</span>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>${formatMoney(pricing.subtotal)}</span>
+                  <span style={{ fontSize: '0.72rem', opacity: 0.75, marginLeft: '0.3rem' }}>excl. tax</span>
+                </div>
               </div>
               <div style={{ fontSize: '0.72rem', opacity: 0.8, display: 'flex', justifyContent: 'space-between' }}>
                 <span>${formatMoney(pricing.pricePerNight)}/night{pricing.extraAdultFeePerNight > 0 ? ` + $${pricing.extraAdultFeePerNight} extra adults` : ''} × {nights} nights</span>
-                <span>Tax: ${formatMoney(pricing.taxAmount)}</span>
+                <span>+ ${formatMoney(pricing.taxAmount)} tax</span>
               </div>
             </div>
           )}

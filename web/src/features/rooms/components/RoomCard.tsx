@@ -108,7 +108,7 @@ export default function RoomCard({ room }: Props) {
             color: 'white',
           }}>
             <div style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: 1 }}>${formatMoney(room.basePricePerNight)}</div>
-            <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500, marginTop: '2px' }}>/night</div>
+            <div style={{ fontSize: '0.62rem', color: 'rgba(255,255,255,0.6)', fontWeight: 500, marginTop: '2px' }}>/night excl. tax</div>
           </div>
 
           {/* Jacuzzi badge */}

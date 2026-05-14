@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh -i \"c:/Users/Varun/Desktop/downbeach_new.pem\" -o StrictHostKeyChecking=no -o ConnectTimeout=15 ubuntu@34.239.36.109 \"echo connected && uptime\")"
+    ]
+  }
+}
