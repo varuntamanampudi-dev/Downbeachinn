@@ -4,7 +4,8 @@ import { cookies } from 'next/headers';
 import { db } from '@/lib/db/client';
 import { adminUsers, adminOtpTokens } from '@/lib/db/schema';
 import { eq, and, gt } from 'drizzle-orm';
-import { generateOtp, sendOtpEmail, signAdminJWT, JWT_COOKIE } from '@/lib/auth';
+import { generateOtp, signAdminJWT, JWT_COOKIE } from '@/lib/auth';
+import { sendOtpEmail } from '@/lib/otp-email';
 
 export type RequestOtpResult = { error?: string; email?: string };
 
